@@ -7,37 +7,32 @@ interface ToolCardProps {
   badge: string;
   href: string;
   icon: React.ReactNode;
-  colorTheme: {
-    iconBg: string;
-    badgeBg: string;
-    buttonBg: string;
-  };
 }
 
-export default function ToolCard({ title, description, badge, href, icon, colorTheme }: ToolCardProps) {
+export default function ToolCard({ title, description, badge, href, icon }: ToolCardProps) {
   return (
     <div className="neo-card p-4 md:p-5 flex flex-col h-full">
       <div className="flex justify-between items-start mb-4">
-        {/* Ikon dengan warna kustom */}
-        <div className={`w-10 h-10 md:w-12 md:h-12 border-[2px] border-neo-text flex items-center justify-center rounded-xl text-white ${colorTheme.iconBg}`}>
+        {/* Ikon kotak putih bergaris tepi */}
+        <div className="w-10 h-10 border-[2px] border-neo-text flex items-center justify-center bg-white rounded-lg">
           {icon}
         </div>
-        {/* Badge dengan warna kustom */}
-        <span className={`border-[2px] border-neo-text px-2 py-1 text-[10px] md:text-xs font-bold uppercase rounded-lg text-black ${colorTheme.badgeBg}`}>
+        {/* Badge berbentuk kapsul (pill) */}
+        <span className="border-[2px] border-neo-text px-3 py-0.5 text-[10px] md:text-xs font-bold uppercase rounded-full bg-white text-black tracking-wider">
           {badge}
         </span>
       </div>
       
-      <h3 className="font-archivo font-extrabold text-base md:text-lg leading-tight mb-2">
+      <h3 className="font-archivo font-extrabold text-base md:text-lg leading-tight mb-1.5 text-black">
         {title}
       </h3>
-      <p className="text-xs md:text-sm text-gray-600 flex-grow mb-5 line-clamp-3 leading-relaxed">
+      <p className="text-[11px] md:text-xs text-gray-600 flex-grow mb-5 leading-relaxed line-clamp-2">
         {description}
       </p>
       
-      {/* Tombol CTA dengan warna kustom */}
-      <Link href={href} className={`neo-button w-full py-2 md:py-2.5 text-xs md:text-sm flex items-center justify-center gap-1.5 mt-auto ${colorTheme.buttonBg}`}>
-        Buka <ArrowRight size={16} />
+      {/* Tombol Hitam dengan Ikon Panah */}
+      <Link href={href} className="neo-button w-full py-2 text-[11px] md:text-sm mt-auto">
+        Buka Alat <ArrowRight size={16} strokeWidth={2.5} />
       </Link>
     </div>
   );
