@@ -1,75 +1,32 @@
 import ToolCard from "./components/ToolCard";
-import { FileText, Image as ImageIcon, Play, QrCode, Zap } from "lucide-react";
+import { FileText, Image as ImageIcon, Play, QrCode, Link, Music, Video, Sparkles } from "lucide-react";
 
 export default function Home() {
   const tools = [
-    { 
-      title: "Merge PDF", 
-      description: "Gabungkan beberapa file PDF menjadi satu dokumen dengan cepat dan aman.", 
-      badge: "PDF", 
-      href: "/tools/merge-pdf",
-      icon: <FileText size={22} />,
-      theme: {
-        iconBg: "bg-neo-pink",
-        badgeBg: "bg-neo-pink text-white",
-        buttonBg: "bg-neo-pink text-white hover:bg-pink-600"
-      }
-    },
-    { 
-      title: "Kompres Gambar", 
-      description: "Kecilkan ukuran file JPG, PNG, atau WebP tanpa mengurangi kualitas.", 
-      badge: "Gambar", 
-      href: "/tools/compress-img",
-      icon: <ImageIcon size={22} />,
-      theme: {
-        iconBg: "bg-neo-green",
-        badgeBg: "bg-neo-green text-white",
-        buttonBg: "bg-neo-green text-white hover:bg-green-600"
-      }
-    },
-    { 
-      title: "Streaming Anime", 
-      description: "Nonton anime favorit dengan kualitas HD dan tanpa batasan server.", 
-      badge: "Stream", 
-      href: "/anime",
-      icon: <Play size={22} />,
-      theme: {
-        iconBg: "bg-neo-purple",
-        badgeBg: "bg-neo-purple text-white",
-        buttonBg: "bg-neo-yellow text-black hover:bg-yellow-400"
-      }
-    },
-    { 
-      title: "QR Code Studio", 
-      description: "Desain kode QR kustom dengan logo, warna, dan frame pilihanmu.", 
-      badge: "Kustom", 
-      href: "/tools/qr-code",
-      icon: <QrCode size={22} />,
-      theme: {
-        iconBg: "bg-neo-blue",
-        badgeBg: "bg-neo-blue text-white",
-        buttonBg: "bg-neo-blue text-white hover:bg-blue-600"
-      }
-    },
+    { title: "File ke Link", description: "Unggah foto, video, dan PDF untuk dijadikan tautan URL...", badge: "Universal", href: "#", icon: <Link size={20} strokeWidth={2.5} /> },
+    { title: "Kompres Media HD", description: "Optimasi ukuran file gambar dan video hingga kilobyte...", badge: "MB + KB", href: "#", icon: <ImageIcon size={20} strokeWidth={2.5} /> },
+    { title: "QR Code Studio", description: "Desain kode QR kustom dengan logo dan frame...", badge: "Custom QR", href: "#", icon: <QrCode size={20} strokeWidth={2.5} /> },
+    { title: "Audio Merger", description: "Satukan dan potong menit atau detik beberapa lagu...", badge: "Time", href: "#", icon: <Music size={20} strokeWidth={2.5} /> },
+    { title: "Photo Studio", description: "Edit dan poles foto dengan alat profesional...", badge: "Studio HD", href: "#", icon: <Sparkles size={20} strokeWidth={2.5} /> },
+    { title: "Video Studio", description: "Konversi dan edit video dengan resolusi tinggi...", badge: "FX Studio", href: "#", icon: <Video size={20} strokeWidth={2.5} /> },
+    { title: "Merge PDF", description: "Gabungkan beberapa file PDF menjadi satu dokumen...", badge: "PDF", href: "#", icon: <FileText size={20} strokeWidth={2.5} /> },
+    { title: "Streaming Anime", description: "Nonton anime favorit kualitas HD tanpa batasan...", badge: "Stream", href: "#", icon: <Play size={20} strokeWidth={2.5} /> },
   ];
 
   return (
     <main className="max-w-6xl mx-auto p-4 md:p-8">
-      {/* Header dengan gaya yang lebih tegas */}
-      <header className="mb-10 md:mb-16 border-[3px] border-neo-text bg-neo-yellow p-6 md:p-8 rounded-2xl shadow-[6px_6px_0px_0px_#111]">
-        <div className="flex items-center gap-3 mb-2">
-          <Zap className="text-neo-text" size={32} strokeWidth={2.5} />
-          <h1 className="font-archivo font-extrabold text-4xl md:text-6xl uppercase tracking-tighter text-black">
-            Sion Tool<span className="text-neo-pink">.</span>
-          </h1>
-        </div>
-        <p className="font-bold text-sm md:text-lg text-black/80 max-w-2xl">
+      {/* Header dengan Teks Outline */}
+      <header className="mb-10 md:mb-14 border-b-[3px] border-black pb-6">
+        <h1 className="font-archivo font-extrabold text-5xl md:text-7xl uppercase tracking-tighter mb-3 flex items-center gap-2">
+          <span className="text-outline">SION</span> TOOL
+        </h1>
+        <p className="font-bold text-sm md:text-lg text-gray-600 max-w-2xl">
           Kumpulan alat konversi file dan streaming dalam satu platform. Cepat, gratis, dan tanpa ribet.
         </p>
       </header>
 
       {/* Grid 2 Kolom di HP, 4 Kolom di Desktop */}
-      <section className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6">
+      <section className="grid grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
         {tools.map((tool, index) => (
           <ToolCard 
             key={index} 
@@ -78,7 +35,6 @@ export default function Home() {
             badge={tool.badge} 
             href={tool.href}
             icon={tool.icon}
-            colorTheme={tool.theme}
           />
         ))}
       </section>
