@@ -1,6 +1,7 @@
 "use client";
 import { useEffect, useState } from "react";
-import { Globe, Smartphone, Clock, Monitor, Battery, BatteryCharging, Wifi, Download } from "lucide-react";
+import { Globe, Smartphone, Clock, Monitor, Battery, BatteryCharging, Download } from "lucide-react";
+import Logo from "./Logo"; // IMPORT LOGO
 
 export default function InfoBar() {
   const [time, setTime] = useState<string>("");
@@ -30,14 +31,15 @@ export default function InfoBar() {
 
   const handlePWA = () => {
     if (navigator.vibrate) navigator.vibrate(10);
-    alert("Fitur Install PWA akan tersedia setelah manifest ditambahkan!");
+    alert("Fitur Install PWA akan segera hadir!");
   };
 
   return (
     <div className="bg-white border-[3px] border-neo-text rounded-2xl shadow-[4px_4px_0px_0px_#111] p-3 md:p-4 mb-6 flex flex-col md:flex-row items-center justify-between gap-4">
       <div className="flex flex-row items-center gap-4 w-full md:w-auto">
-        <div className="w-12 h-12 border-[3px] border-neo-text rounded-xl bg-gray-200 flex items-center justify-center shrink-0">
-          <span className="font-archivo font-extrabold text-xl">S</span>
+        {/* AVATAR LOGO BARU */}
+        <div className="w-12 h-12 border-[3px] border-neo-text rounded-xl bg-black flex items-center justify-center shrink-0 shadow-[2px_2px_0px_0px_#111]">
+          <Logo className="w-8 h-8 text-white" />
         </div>
         <div className="flex flex-col text-left">
           <h2 className="font-archivo font-extrabold text-sm md:text-base uppercase mb-1">Sion Dev</h2>
