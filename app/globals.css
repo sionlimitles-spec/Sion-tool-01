@@ -1,18 +1,26 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import "tailwindcss";
+
+@theme {
+  --color-neo-bg: #F8F9FA;
+  --color-neo-text: #000000;
+  --color-neo-card: #FFFFFF;
+  --color-neo-accent: #FFDE00;
+  --color-neo-blue: #0066FF;
+  --color-neo-pink: #FF3366;
+  --color-neo-green: #00CC66;
+}
 
 body {
-  background-color: #F5F0E6;
-  color: #000000;
+  background-color: var(--color-neo-bg);
+  color: var(--color-neo-text);
   font-family: var(--font-grotesk), sans-serif;
 }
 
 @layer components {
   .neo-card {
-    @apply bg-neo-white border-[3px] border-neo-black rounded-none shadow-neo transition-transform hover:-translate-y-1;
+    @apply bg-neo-card border-[3px] border-neo-text rounded-xl shadow-[4px_4px_0px_0px_#000] transition-all hover:shadow-[6px_6px_0px_0px_#000] hover:-translate-y-1;
   }
   .neo-button {
-    @apply bg-neo-yellow border-[3px] border-neo-black font-bold uppercase tracking-wide rounded-none shadow-neo active:translate-x-[2px] active:translate-y-[2px] active:shadow-none block text-center;
+    @apply bg-neo-accent border-[2px] border-neo-text font-bold uppercase tracking-wide rounded-lg shadow-[2px_2px_0px_0px_#000] active:translate-x-[2px] active:translate-y-[2px] active:shadow-none transition-all block text-center;
   }
 }
