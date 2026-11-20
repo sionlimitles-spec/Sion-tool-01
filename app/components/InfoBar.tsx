@@ -1,10 +1,11 @@
 "use client";
 import { useEffect, useState } from "react";
-import { Globe, Smartphone, Clock, Monitor, Battery, Wifi } from "lucide-react";
+import { Globe, Smartphone, Clock, Monitor, Battery, BatteryCharging, Wifi } from "lucide-react";
 
 export default function InfoBar() {
   const [time, setTime] = useState<string>("");
   const [device, setDevice] = useState({ os: "Memuat...", browser: "Memuat..." });
+  const [battery, setBattery] = useState({ level: -1, charging: false });
 
   useEffect(() => {
     // 1. Logika Jam
@@ -32,18 +33,32 @@ export default function InfoBar() {
 
     setDevice({ os, browser });
 
+    // 3. Logika Baterai Real-time
+    if ('getBattery' in navigator) {
+      (navigator as any).getBattery().then((batt: any) => {
+        const updateBattery = () => {
+          setBattery({
+            level: Math.round(batt.level * 100),
+            charging: batt.charging
+          });
+        };
+        updateBattery();
+        // Pantau perubahan baterai secara live
+        batt.addEventListener('levelchange', updateBattery);
+        batt.addEventListener('chargingchange', updateBattery);
+      });
+    }
+
     return () => clearInterval(interval);
   }, []);
 
   return (
     <div className="bg-white border-[3px] border-neo-text rounded-2xl shadow-[4px_4px_0px_0px_#111] p-3 md:p-4 mb-6 flex flex-row items-center gap-4">
       
-      {/* Avatar */}
       <div className="w-12 h-12 md:w-16 md:h-16 border-[3px] border-neo-text rounded-xl bg-gray-200 flex items-center justify-center shrink-0 shadow-[2px_2px_0px_0px_#111]">
         <span className="font-archivo font-extrabold text-xl md:text-2xl">S</span>
       </div>
 
-      {/* Judul & Info */}
       <div className="flex flex-col flex-grow text-left">
         <h2 className="font-archivo font-extrabold text-sm md:text-lg uppercase mb-1.5">
           Sion Developer
@@ -53,7 +68,13 @@ export default function InfoBar() {
           <div className="flex items-center gap-1.5"><Clock size={12} className="md:w-3.5 md:h-3.5" /> {time || "--:--"}</div>
           <div className="flex items-center gap-1.5"><Smartphone size={12} className="md:w-3.5 md:h-3.5" /> {device.os}</div>
           <div className="flex items-center gap-1.5"><Monitor size={12} className="md:w-3.5 md:h-3.5" /> {device.browser}</div>
-          <div className="flex items-center gap-1.5"><Battery size={12} className="md:w-3.5 md:h-3.5" /> 100%</div>
+          
+          {/* Baterai Live */}
+          <div className="flex items-center gap-1.5 text-black">
+            {battery.charging ? <BatteryCharging size={14} className="text-green-500" /> : <Battery size={14} />} 
+            {battery.level !== -1 ? `${battery.level}%` : 'N/A'}
+          </div>
+
           <div className="flex items-center gap-1.5 text-green-600"><Wifi size={12} className="md:w-3.5 md:h-3.5" /> Online</div>
         </div>
       </div>
