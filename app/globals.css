@@ -1,0 +1,18 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+body {
+  background-color: #F5F0E6;
+  color: #000000;
+  font-family: var(--font-grotesk), sans-serif;
+}
+
+@layer components {
+  .neo-card {
+    @apply bg-neo-white border-[3px] border-neo-black rounded-none shadow-neo transition-transform hover:-translate-y-1;
+  }
+  .neo-button {
+    @apply bg-neo-yellow border-[3px] border-neo-black font-bold uppercase tracking-wide rounded-none shadow-neo active:translate-x-[2px] active:translate-y-[2px] active:shadow-none block text-center;
+  }
+}
