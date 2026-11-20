@@ -1,5 +1,7 @@
 import ToolCard from "./components/ToolCard";
-import { FileText, Image as ImageIcon, Play, QrCode, Link, Music, Video, Sparkles } from "lucide-react";
+import HeroBanner from "./components/HeroBanner";
+import InfoBar from "./components/InfoBar";
+import { FileText, Image as ImageIcon, Play, QrCode, Link, Music, Video, Sparkles, Search } from "lucide-react";
 
 export default function Home() {
   const tools = [
@@ -15,17 +17,26 @@ export default function Home() {
 
   return (
     <main className="max-w-6xl mx-auto p-4 md:p-8">
-      {/* Header dengan Teks Outline */}
-      <header className="mb-10 md:mb-14 border-b-[3px] border-black pb-6">
-        <h1 className="font-archivo font-extrabold text-5xl md:text-7xl uppercase tracking-tighter mb-3 flex items-center gap-2">
-          <span className="text-outline">SION</span> TOOL
-        </h1>
-        <p className="font-bold text-sm md:text-lg text-gray-600 max-w-2xl">
-          Kumpulan alat konversi file dan streaming dalam satu platform. Cepat, gratis, dan tanpa ribet.
-        </p>
-      </header>
+      
+      {/* 1. Hero Banner Video */}
+      <HeroBanner />
 
-      {/* Grid 2 Kolom di HP, 4 Kolom di Desktop */}
+      {/* 2. Info Bar Developer */}
+      <InfoBar />
+
+      {/* 3. Search Bar Neobrutalism */}
+      <div className="relative mb-6">
+        <div className="absolute inset-y-0 left-0 flex items-center pl-4 pointer-events-none">
+          <Search size={20} className="text-gray-500" strokeWidth={3} />
+        </div>
+        <input 
+          type="text" 
+          placeholder="Cari tools..." 
+          className="w-full bg-white border-[3px] border-neo-text rounded-xl py-3 pl-12 pr-4 font-bold text-sm md:text-base shadow-[4px_4px_0px_0px_#111] focus:outline-none focus:ring-0 focus:shadow-[6px_6px_0px_0px_#111] transition-all"
+        />
+      </div>
+
+      {/* 4. Grid Tools */}
       <section className="grid grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
         {tools.map((tool, index) => (
           <ToolCard 
@@ -38,6 +49,7 @@ export default function Home() {
           />
         ))}
       </section>
+
     </main>
   );
 }
