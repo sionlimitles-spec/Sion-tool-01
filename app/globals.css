@@ -1,26 +1,35 @@
 @import "tailwindcss";
 
 @theme {
-  --color-neo-bg: #F8F9FA;
-  --color-neo-text: #000000;
+  /* Palet Warna Neobrutalism Premium */
+  --color-neo-bg: #F4F4F0; /* Off-white bersih */
+  --color-neo-text: #111111; /* Hitam pekat, bukan hitam mati */
   --color-neo-card: #FFFFFF;
-  --color-neo-accent: #FFDE00;
+  
+  /* Warna Aksen */
+  --color-neo-yellow: #FFDE00;
   --color-neo-blue: #0066FF;
   --color-neo-pink: #FF3366;
   --color-neo-green: #00CC66;
+  --color-neo-purple: #8B5CF6;
 }
 
 body {
   background-color: var(--color-neo-bg);
   color: var(--color-neo-text);
   font-family: var(--font-grotesk), sans-serif;
+  /* Memberi sedikit tekstur titik-titik halus di background agar tidak flat */
+  background-image: radial-gradient(#000 0.5px, transparent 0.5px);
+  background-size: 20px 20px;
+  background-opacity: 0.05;
 }
 
 @layer components {
   .neo-card {
-    @apply bg-neo-card border-[3px] border-neo-text rounded-xl shadow-[4px_4px_0px_0px_#000] transition-all hover:shadow-[6px_6px_0px_0px_#000] hover:-translate-y-1;
+    @apply bg-neo-card border-[3px] border-neo-text rounded-2xl shadow-[5px_5px_0px_0px_#111] transition-all duration-200 hover:shadow-[8px_8px_0px_0px_#111] hover:-translate-y-1 hover:-translate-x-1;
   }
+  
   .neo-button {
-    @apply bg-neo-accent border-[2px] border-neo-text font-bold uppercase tracking-wide rounded-lg shadow-[2px_2px_0px_0px_#000] active:translate-x-[2px] active:translate-y-[2px] active:shadow-none transition-all block text-center;
+    @apply border-[2px] border-neo-text font-bold uppercase tracking-wide rounded-xl shadow-[3px_3px_0px_0px_#111] active:translate-x-[3px] active:translate-y-[3px] active:shadow-none transition-all block text-center text-black;
   }
 }
