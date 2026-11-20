@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { FileText, Image as ImageIcon, Play, QrCode, ArrowRight } from "lucide-react";
+import { ArrowRight } from "lucide-react";
 
 interface ToolCardProps {
   title: string;
@@ -7,30 +7,37 @@ interface ToolCardProps {
   badge: string;
   href: string;
   icon: React.ReactNode;
-  badgeColor: string;
+  colorTheme: {
+    iconBg: string;
+    badgeBg: string;
+    buttonBg: string;
+  };
 }
 
-export default function ToolCard({ title, description, badge, href, icon, badgeColor }: ToolCardProps) {
+export default function ToolCard({ title, description, badge, href, icon, colorTheme }: ToolCardProps) {
   return (
-    <div className="neo-card p-3 md:p-4 flex flex-col h-full">
-      <div className="flex justify-between items-start mb-3">
-        <div className="w-8 h-8 md:w-10 md:h-10 border-[2px] border-neo-text flex items-center justify-center bg-neo-blue text-white rounded-lg">
+    <div className="neo-card p-4 md:p-5 flex flex-col h-full">
+      <div className="flex justify-between items-start mb-4">
+        {/* Ikon dengan warna kustom */}
+        <div className={`w-10 h-10 md:w-12 md:h-12 border-[2px] border-neo-text flex items-center justify-center rounded-xl text-white ${colorTheme.iconBg}`}>
           {icon}
         </div>
-        <span className={`border-[2px] border-neo-text px-1.5 py-0.5 text-[10px] md:text-xs font-bold uppercase rounded-md ${badgeColor}`}>
+        {/* Badge dengan warna kustom */}
+        <span className={`border-[2px] border-neo-text px-2 py-1 text-[10px] md:text-xs font-bold uppercase rounded-lg text-black ${colorTheme.badgeBg}`}>
           {badge}
         </span>
       </div>
       
-      <h3 className="font-archivo font-extrabold text-sm md:text-base leading-tight mb-1.5">
+      <h3 className="font-archivo font-extrabold text-base md:text-lg leading-tight mb-2">
         {title}
       </h3>
-      <p className="text-[10px] md:text-xs text-gray-600 flex-grow mb-4 line-clamp-2 leading-relaxed">
+      <p className="text-xs md:text-sm text-gray-600 flex-grow mb-5 line-clamp-3 leading-relaxed">
         {description}
       </p>
       
-      <Link href={href} className="neo-button w-full py-1.5 md:py-2 text-[10px] md:text-xs flex items-center justify-center gap-1 mt-auto">
-        Buka <ArrowRight size={14} />
+      {/* Tombol CTA dengan warna kustom */}
+      <Link href={href} className={`neo-button w-full py-2 md:py-2.5 text-xs md:text-sm flex items-center justify-center gap-1.5 mt-auto ${colorTheme.buttonBg}`}>
+        Buka <ArrowRight size={16} />
       </Link>
     </div>
   );
