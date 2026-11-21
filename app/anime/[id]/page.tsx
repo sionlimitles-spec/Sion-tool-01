@@ -16,7 +16,8 @@ export default function AnimeDetail() {
   
   // State untuk Streaming
   const [anilistId, setAnilistId] = useState<number | null>(null);
-  const [providerEpisodes, setProviderEpisodes] = useState<any[]>([]); // Daftar episode dari Provider
+  const [providerEpisodes, setProviderEpisodes] = useState<any[]>([]);
+  const [activeProvider, setActiveProvider] = useState<string>("");
   const [activeVideoUrl, setActiveVideoUrl] = useState<string | null>(null);
   const [isStreamLoading, setIsStreamLoading] = useState(false);
   const [streamError, setStreamError] = useState<string | null>(null);
@@ -60,14 +61,41 @@ export default function AnimeDetail() {
           const aId = anilistData.data.Media.id;
           setAnilistId(aId);
 
-          // 3. Ambil Daftar Episode dari Provider (Anivexa API via Render)
-          const providerRes = await fetch(`https://sion-stream-api01.onrender.com/anime/anivexa/episodes/reanime/${aId}`);
-          
-          if (providerRes.ok) {
-            const providerData = await providerRes.json();
-            // Ekstraksi aman untuk mendapatkan array episode
-            const subEpisodes = providerData?.reanime?.episodes?.sub || providerData?.episodes?.sub || [];
-            if (isMounted) setProviderEpisodes(subEpisodes);
+          // 3. Ambil Daftar Episode (Coba beberapa provider)
+          const providers = ["reanime", "anikoto", "mkissa"];
+          let fetchedEpisodes: any[] = [];
+          let workingProvider = "";
+
+          for (const p of providers) {
+            try {
+              const providerRes = await fetch(`https://sion-stream-api01.onrender.com/anime/anivexa/episodes/${p}/${aId}`);
+              if (providerRes.ok) {
+                const providerData = await providerRes.json();
+                
+                // Ekstraksi super aman untuk berbagai format respons
+                let eps = providerData?.episodes?.sub || 
+                          providerData?.[p]?.episodes?.sub || 
+                          providerData?.episodes || 
+                          [];
+
+                if (Array.isArray(eps) && eps.length > 0) {
+                  fetchedEpisodes = eps;
+                  workingProvider = p;
+                  break; // Hentikan loop jika sudah dapat provider yang punya episode
+                }
+              }
+            } catch (e) {
+              console.log(`Provider ${p} gagal.`);
+            }
+          }
+
+          if (isMounted) {
+            if (fetchedEpisodes.length > 0) {
+              setProviderEpisodes(fetchedEpisodes);
+              setActiveProvider(workingProvider);
+            } else {
+              console.warn("Tidak ada episode ditemukan di semua provider untuk AniList ID:", aId);
+            }
           }
         }
 
@@ -83,16 +111,17 @@ export default function AnimeDetail() {
     return () => { isMounted = false; };
   }, [id]);
 
-  // Fungsi Streaming (Menerima objek episode utuh)
+  // Fungsi Streaming
   const handlePlayEpisode = async (episode: any) => {
-    if (!anilistId) return;
+    if (!anilistId || !activeProvider) return;
     
     setIsStreamLoading(true);
     setStreamError(null);
     setCurrentEp(episode.number);
 
     try {
-      // episode.id formatnya: "watch/reanime/154587/sub/reanime-1"
+      // episode.id biasanya sudah berformat "watch/reanime/id/sub/ep-1"
+      // Kita pastikan path-nya benar
       const watchPath = episode.id; 
       
       const watchRes = await fetch(`https://sion-stream-api01.onrender.com/anime/anivexa/${watchPath}`);
@@ -101,7 +130,7 @@ export default function AnimeDetail() {
       
       const watchData = await watchRes.json();
 
-      // Ambil proxiedUrl (HLS proxy dari Anivexa)
+      // Ambil proxiedUrl (HLS proxy)
       const streamUrl = watchData.proxiedUrl || watchData.url;
 
       if (streamUrl) {
@@ -159,7 +188,6 @@ export default function AnimeDetail() {
           <div className="w-full aspect-video bg-black border-[3px] border-neo-text rounded-2xl shadow-[6px_6px_0px_0px_#111] flex flex-col items-center justify-center text-white">
             <Loader2 className="w-10 h-10 animate-spin mb-4 text-neo-yellow" />
             <p className="font-archivo font-bold">Mencari server terbaik...</p>
-            <p className="text-xs text-gray-400 mt-1">(Render gratis mungkin butuh 30 detik untuk bangun)</p>
           </div>
         ) : streamError ? (
           <div className="w-full aspect-video bg-gray-100 border-[3px] border-neo-text rounded-2xl shadow-[6px_6px_0px_0px_#111] flex flex-col items-center justify-center p-6 text-center">
@@ -209,10 +237,11 @@ export default function AnimeDetail() {
         </div>
       </div>
 
-      {/* Daftar Episode (Diambil dari Provider, BUKAN Tenrai) */}
+      {/* Daftar Episode */}
       <div>
-        <h2 className="font-archivo font-extrabold text-xl md:text-2xl uppercase mb-3">
+        <h2 className="font-archivo font-extrabold text-xl md:text-2xl uppercase mb-3 flex items-center justify-between">
           Daftar Episode
+          {activeProvider && <span className="text-xs bg-neo-green text-white px-2 py-1 rounded-md border-[2px] border-black">Source: {activeProvider}</span>}
         </h2>
         {providerEpisodes.length > 0 ? (
           <div className="grid grid-cols-4 md:grid-cols-6 lg:grid-cols-8 gap-3">
@@ -228,7 +257,8 @@ export default function AnimeDetail() {
           </div>
         ) : (
           <div className="bg-white border-[3px] border-dashed border-gray-400 rounded-xl p-6 text-center">
-            <p className="font-bold text-gray-500">Episode belum tersedia di provider reanime.</p>
+            <p className="font-bold text-gray-500">Episode belum tersedia dari semua provider (Reanime, Anikoto, MKissa).</p>
+            <p className="text-xs text-gray-400 mt-2">Mungkin server API baru saja bangun (Render Free). Coba refresh halaman setelah 30 detik.</p>
           </div>
         )}
       </div>
