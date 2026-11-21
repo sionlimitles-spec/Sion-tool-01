@@ -5,11 +5,11 @@ import AnimeCard from "../components/AnimeCard";
 import { ArrowLeft, Play, Star } from "lucide-react";
 
 export default function AnimeHome() {
-  // DATA DUMMY (Nanti diganti dengan data asli dari API Kuhi/Consumet)
+  // GAMBAR DUMMY YANG PASTI MUNCUL (UNSPLASH)
   const featuredAnime = {
     id: "granblue-fantasy",
     title: "Granblue Fantasy: The Animation",
-    image: "https://s4.anilist.co/file/anilistcdn/media/anime/cover/large/bx20792-1d7cS0Q4Q2Q2.jpg", // Pakai placeholder atau gambar dari user
+    image: "https://images.unsplash.com/photo-1578632767115-351597cf2477?q=80&w=1000&auto=format&fit=crop", 
     genres: ["Fantasy", "Action", "Adventure"],
     synopsis: "Petualangan epik di dunia penuh misteri dan kekuatan luar biasa. Bergabunglah dengan Gran dan kawan-kawan di langit biru.",
     status: "Completed",
@@ -17,11 +17,11 @@ export default function AnimeHome() {
   };
 
   const trendingAnime = [
-    { id: "solo-leveling", title: "Solo Leveling", image: "https://s4.anilist.co/file/anilistcdn/media/anime/cover/large/bx151807-I2u37E7cA1q7.jpg", genres: ["Action", "Fantasy"], status: "Ongoing", rating: 8.5 },
-    { id: "demon-slayer", title: "Demon Slayer", image: "https://s4.anilist.co/file/anilistcdn/media/anime/cover/large/bx101922-PEn1CTc93d0e.jpg", genres: ["Action", "Supernatural"], status: "Ongoing", rating: 8.8 },
-    { id: "jujutsu-kaisen", title: "Jujutsu Kaisen", image: "https://s4.anilist.co/file/anilistcdn/media/anime/cover/large/bx113415-bbBWj4p0E1gO.jpg", genres: ["Action", "Fantasy"], status: "Ongoing", rating: 8.6 },
-    { id: "frieren", title: "Frieren: Beyond Journey's End", image: "https://s4.anilist.co/file/anilistcdn/media/anime/cover/large/bx154587-B0T0T0T0T0T0.jpg", genres: ["Adventure", "Drama"], status: "Completed", rating: 9.1 },
-    { id: "one-piece", title: "One Piece", image: "https://s4.anilist.co/file/anilistcdn/media/anime/cover/large/bx21-EL9dP0i1Q1wQ.jpg", genres: ["Action", "Adventure"], status: "Ongoing", rating: null }, // Contoh tanpa rating
+    { id: "solo-leveling", title: "Solo Leveling", image: "https://images.unsplash.com/photo-1607604276583-eef5d076aa5f?q=80&w=500&auto=format&fit=crop", genres: ["Action", "Fantasy"], status: "Ongoing", rating: 8.5 },
+    { id: "demon-slayer", title: "Demon Slayer", image: "https://images.unsplash.com/photo-1541562232579-512a21360020?q=80&w=500&auto=format&fit=crop", genres: ["Action", "Supernatural"], status: "Ongoing", rating: 8.8 },
+    { id: "jujutsu-kaisen", title: "Jujutsu Kaisen", image: "https://images.unsplash.com/photo-1618336753974-aae8e04506aa?q=80&w=500&auto=format&fit=crop", genres: ["Action", "Fantasy"], status: "Ongoing", rating: 8.6 },
+    { id: "frieren", title: "Frieren: Beyond Journey's End", image: "https://images.unsplash.com/photo-1518709268805-4e9042af9f23?q=80&w=500&auto=format&fit=crop", genres: ["Adventure", "Drama"], status: "Completed", rating: 9.1 },
+    { id: "one-piece", title: "One Piece", image: "https://images.unsplash.com/photo-1628260412297-a3377e45006f?q=80&w=500&auto=format&fit=crop", genres: ["Action", "Adventure"], status: "Ongoing", rating: null },
   ];
 
   return (
@@ -42,9 +42,9 @@ export default function AnimeHome() {
         <img 
           src={featuredAnime.image} 
           alt={featuredAnime.title} 
-          className="absolute inset-0 w-full h-full object-cover opacity-70"
+          className="absolute inset-0 w-full h-full object-cover opacity-80"
         />
-        <div className="absolute inset-0 bg-gradient-to-t from-black via-black/50 to-transparent" />
+        <div className="absolute inset-0 bg-gradient-to-t from-black via-black/60 to-transparent" />
         
         <div className="absolute bottom-0 left-0 p-5 md:p-8 flex flex-col justify-end h-full w-full">
           <span className="bg-white text-black text-[10px] font-extrabold uppercase px-2 py-1 rounded-md border-[2px] border-black w-fit mb-2 shadow-[2px_2px_0px_0px_#111]">
@@ -57,11 +57,12 @@ export default function AnimeHome() {
             {featuredAnime.synopsis}
           </p>
           <div className="flex items-center gap-3">
-            <Link href={`/anime/${featuredAnime.id}`} className="neo-button bg-neo-yellow text-black px-6 py-2.5 text-sm flex items-center gap-2">
-              <Play size={18} className="fill-black" /> Tonton Sekarang
+            {/* Tombol sudah pakai warna kuning yang pasti muncul */}
+            <Link href={`/anime/${featuredAnime.id}`} className="neo-button bg-neo-yellow text-black px-6 py-2.5 text-sm flex items-center gap-2 hover:bg-yellow-400">
+              <Play size={18} className="fill-black" /> Tonton
             </Link>
             <div className="flex items-center gap-1 bg-white px-3 py-2 rounded-xl border-[2px] border-black shadow-[2px_2px_0px_0px_#111]">
-               <Star size={16} className="fill-yellow-400 text-black" />
+               <Star size={16} className="fill-neo-yellow text-black" />
                <span className="font-extrabold text-sm">{featuredAnime.rating}</span>
             </div>
           </div>
@@ -73,7 +74,7 @@ export default function AnimeHome() {
         <h2 className="font-archivo font-extrabold text-xl md:text-2xl text-black uppercase">
           Trending Anime
         </h2>
-        <Link href="#" className="text-xs font-bold text-blue-600 hover:underline">
+        <Link href="#" className="text-xs font-bold text-neo-blue hover:underline">
           See all →
         </Link>
       </div>
