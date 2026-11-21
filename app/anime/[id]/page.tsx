@@ -6,6 +6,8 @@ import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
 import VideoPlayer from "../../components/VideoPlayer";
 
+const BASE_URL = "https://sion-stream-api01.onrender.com";
+
 export default function AnimeDetail() {
   const params = useParams();
   const id = params.id as string;
@@ -60,25 +62,26 @@ export default function AnimeDetail() {
           const aId = anilistData.data.Media.id;
           setAnilistId(aId);
 
-          // 3. Ambil Daftar Episode dari Endpoint yang BENAR
-          // Endpoint: /anime/anivexa/episodes/:anilistId (tanpa nama provider)
-          const episodesRes = await fetch(`https://sion-stream-api01.onrender.com/anime/anivexa/episodes/${aId}`);
+          // 3. Ambil Daftar Episode (Endpoint yang BENAR: /episodes/:anilistId)
+          const episodesRes = await fetch(`${BASE_URL}/episodes/${aId}`);
           
           if (episodesRes.ok) {
             const episodesData = await episodesRes.json();
             
-            // Cari provider pertama yang memiliki daftar episode sub
+            // API mengembalikan objek dengan key nama provider
             const providersToTry = ["reanime", "anikoto", "mkissa", "kaa", "animegg"];
             let foundEpisodes: any[] = [];
             let foundProvider = "";
 
             for (const p of providersToTry) {
-              const providerBlock = episodesData[p];
-              // Struktur yang benar: providerBlock.episodes.sub
-              if (providerBlock && providerBlock.episodes && Array.isArray(providerBlock.episodes.sub) && providerBlock.episodes.sub.length > 0) {
-                foundEpisodes = providerBlock.episodes.sub;
-                foundProvider = p;
-                break;
+              // Cek apakah provider ini ada dan punya array episode sub
+              if (episodesData[p] && episodesData[p].episodes) {
+                const subEps = episodesData[p].episodes.sub;
+                if (Array.isArray(subEps) && subEps.length > 0) {
+                  foundEpisodes = subEps;
+                  foundProvider = p;
+                  break;
+                }
               }
             }
 
@@ -87,7 +90,7 @@ export default function AnimeDetail() {
                 setProviderEpisodes(foundEpisodes);
                 setActiveProvider(foundProvider);
               } else {
-                console.warn("Tidak ada episode ditemukan di provider mana pun untuk AniList ID:", aId);
+                console.warn("Struktur JSON API:", episodesData);
               }
             }
           }
@@ -113,16 +116,16 @@ export default function AnimeDetail() {
     setCurrentEp(episode.number);
 
     try {
-      // episode.id sudah berbentuk path lengkap, misal: "watch/reanime/154587/sub/reanime-1"
-      const watchPath = episode.id; 
+      // Buat URL Watch berdasarkan rute API: /watch/:provider/:id/sub/:provider-:ep
+      const watchUrl = `${BASE_URL}/watch/${activeProvider}/${anilistId}/sub/${activeProvider}-${episode.number}`;
       
-      const watchRes = await fetch(`https://sion-stream-api01.onrender.com/anime/anivexa/${watchPath}`);
+      const watchRes = await fetch(watchUrl);
       
-      if (!watchRes.ok) throw new Error("Gagal mengambil link video.");
+      if (!watchRes.ok) throw new Error("Gagal mengambil link video dari server.");
       
       const watchData = await watchRes.json();
 
-      // Prioritaskan proxiedUrl (HLS proxy)
+      // Prioritaskan proxiedUrl (HLS proxy dari Anivexa)
       const streamUrl = watchData.proxiedUrl || watchData.url;
 
       if (streamUrl) {
@@ -134,7 +137,7 @@ export default function AnimeDetail() {
 
     } catch (err: any) {
       console.error(err);
-      setStreamError(`Gagal memuat Episode ${episode.number}. Server mungkin sedang sibuk.`);
+      setStreamError(`Gagal memuat Episode ${episode.number}. Server mungkin sedang sibuk atau link belum tersedia.`);
     } finally {
       setIsStreamLoading(false);
     }
@@ -185,7 +188,7 @@ export default function AnimeDetail() {
           <div className="w-full aspect-video bg-gray-100 border-[3px] border-neo-text rounded-2xl shadow-[6px_6px_0px_0px_#111] flex flex-col items-center justify-center p-6 text-center">
             <AlertCircle className="w-12 h-12 text-neo-pink mb-4" />
             <p className="font-bold text-gray-800 mb-4">{streamError}</p>
-            <button onClick={() => handlePlayEpisode({ number: currentEp, id: providerEpisodes.find(e => e.number === currentEp)?.id })} className="neo-button bg-neo-yellow text-black px-6 py-2">Coba Lagi</button>
+            <button onClick={() => handlePlayEpisode({ number: currentEp })} className="neo-button bg-neo-yellow text-black px-6 py-2">Coba Lagi</button>
           </div>
         ) : activeVideoUrl ? (
           <VideoPlayer url={activeVideoUrl} />
@@ -239,7 +242,7 @@ export default function AnimeDetail() {
           <div className="grid grid-cols-4 md:grid-cols-6 lg:grid-cols-8 gap-3">
             {providerEpisodes.map((ep) => (
               <button 
-                key={ep.id}
+                key={ep.id || ep.number}
                 onClick={() => handlePlayEpisode(ep)}
                 className={`border-[3px] border-neo-text rounded-xl py-3 font-extrabold text-sm shadow-[3px_3px_0px_0px_#111] hover:-translate-y-1 active:translate-y-[3px] active:shadow-none transition-all ${currentEp === ep.number ? 'bg-neo-yellow text-black' : 'bg-white text-black hover:bg-gray-100'}`}
               >
@@ -249,8 +252,8 @@ export default function AnimeDetail() {
           </div>
         ) : (
           <div className="bg-white border-[3px] border-dashed border-gray-400 rounded-xl p-6 text-center">
-            <p className="font-bold text-gray-500">Episode belum tersedia dari semua provider.</p>
-            <p className="text-xs text-gray-400 mt-2">Pastikan server Render sudah bangun (buka URL API secara manual di tab baru untuk memicu cold start), lalu refresh halaman ini.</p>
+            <p className="font-bold text-gray-500">Episode belum tersedia dari provider.</p>
+            <p className="text-xs text-gray-400 mt-2">Klik <a href={`${BASE_URL}/episodes/${anilistId || ''}`} target="_blank" rel="noreferrer" className="underline font-bold">di sini</a> untuk membangunkan server Render, lalu refresh halaman ini.</p>
           </div>
         )}
       </div>
