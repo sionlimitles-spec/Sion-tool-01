@@ -17,12 +17,13 @@ export default function AnimeDetail() {
   
   // State untuk Streaming
   const [anilistId, setAnilistId] = useState<number | null>(null);
+  const [providerEpisodes, setProviderEpisodes] = useState<any[]>([]); // Menyimpan daftar episode dari provider
   const [activeVideoUrl, setActiveVideoUrl] = useState<string | null>(null);
   const [isStreamLoading, setIsStreamLoading] = useState(false);
   const [streamError, setStreamError] = useState<string | null>(null);
   const [currentEp, setCurrentEp] = useState<number | null>(null);
 
-  // 1. Ambil Detail Anime dari Tenrai (MAL ID)
+  // 1. Ambil Detail Anime dari Tenrai (MAL ID) & AniList ID
   useEffect(() => {
     let isMounted = true;
 
@@ -38,7 +39,6 @@ export default function AnimeDetail() {
         if (!isMounted) return;
         setAnime(data.data);
 
-        // Jeda 1 detik untuk rate limit
         await new Promise(resolve => setTimeout(resolve, 1000));
 
         const epRes = await fetch(`https://api.tenrai.org/v4/anime/${id}/episodes`);
@@ -47,7 +47,7 @@ export default function AnimeDetail() {
           if (isMounted) setEpisodes(epData.data || []);
         }
 
-        // 2. Cari AniList ID berdasarkan judul
+        // Cari AniList ID
         const anilistQuery = `
           query ($search: String) {
             Media (search: $search, type: ANIME) {
@@ -66,7 +66,17 @@ export default function AnimeDetail() {
         const anilistData = await anilistRes.json();
         
         if (isMounted && anilistData.data?.Media?.id) {
-          setAnilistId(anilistData.data.Media.id);
+          const aId = anilistData.data.Media.id;
+          setAnilistId(aId);
+
+          // 2. Ambil Daftar Episode dari Provider reanime via API Render
+          const providerRes = await fetch(`https://sion-stream-api01.onrender.com/anime/anivexa/episodes/reanime/${aId}`);
+          if (providerRes.ok) {
+            const providerData = await providerRes.json();
+            // Struktur respons: providerData.reanime.episodes.sub
+            const subEpisodes = providerData?.reanime?.episodes?.sub || [];
+            if (isMounted) setProviderEpisodes(subEpisodes);
+          }
         }
 
       } catch (err: any) {
@@ -81,28 +91,39 @@ export default function AnimeDetail() {
     return () => { isMounted = false; };
   }, [id]);
 
-  // 3. Fungsi Streaming menggunakan API Render (Anivexa)
+  // 3. Fungsi Streaming menggunakan ID Episode yang benar
   const handlePlayEpisode = async (epNumber: number) => {
     if (!anilistId) {
       setStreamError("AniList ID tidak ditemukan untuk anime ini.");
       return;
     }
+    
+    // Cari ID episode yang sesuai dari daftar provider
+    const targetEpisode = providerEpisodes.find(ep => ep.number === epNumber);
+    
+    if (!targetEpisode || !targetEpisode.id) {
+      setStreamError(`Episode ${epNumber} tidak tersedia di provider reanime.`);
+      return;
+    }
+
     setIsStreamLoading(true);
     setStreamError(null);
     setCurrentEp(epNumber);
 
     try {
-      // Menggunakan provider 'reanime' yang mendukung HLS Proxy
-      const provider = "reanime"; 
+      // Gunakan ID unik dari provider (contoh: "watch/reanime/154587/sub/reanime-1")
+      // Kita hanya perlu bagian akhirnya setelah "watch/reanime/..." 
+      // Namun dokumentasi mengatakan kita harus memanggil path lengkapnya.
+      // Path watch sudah termasuk dalam ID: "watch/reanime/154587/sub/reanime-1"
+      const watchPath = targetEpisode.id; 
       
-      // Ambil link stream dari API Render
-      const watchRes = await fetch(`https://sion-stream-api01.onrender.com/anime/anivexa/watch/${provider}/${anilistId}/sub/${provider}-${epNumber}`);
+      const watchRes = await fetch(`https://sion-stream-api01.onrender.com/anime/anivexa/${watchPath}`);
       
       if (!watchRes.ok) throw new Error("Gagal mengambil link video dari server.");
       
       const watchData = await watchRes.json();
 
-      // Gunakan proxiedUrl (jika ada) atau url biasa
+      // Anivexa mengembalikan "proxiedUrl" untuk reanime (Flixcloud HLS)
       const streamUrl = watchData.proxiedUrl || watchData.url;
 
       if (streamUrl) {
@@ -114,7 +135,7 @@ export default function AnimeDetail() {
 
     } catch (err: any) {
       console.error(err);
-      setStreamError("Gagal memuat video. Server mungkin sedang sibuk atau episode belum tersedia.");
+      setStreamError(`Gagal memuat Episode ${epNumber}. Server mungkin sedang sibuk atau episode belum tersedia.`);
     } finally {
       setIsStreamLoading(false);
     }
