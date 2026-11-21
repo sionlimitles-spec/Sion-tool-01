@@ -4,7 +4,7 @@ import Hls from "hls.js";
 import { Play, Pause, Maximize, Settings, Volume2, VolumeX } from "lucide-react";
 
 interface VideoPlayerProps {
-  url: string; // URL .m3u8
+  url: string;
 }
 
 interface QualityLevel {
@@ -14,8 +14,9 @@ interface QualityLevel {
 
 export default function VideoPlayer({ url }: VideoPlayerProps) {
   const videoRef = useRef<HTMLVideoElement>(null);
+  const hlsRef = useRef<Hls | null>(null);
   const [levels, setLevels] = useState<QualityLevel[]>([]);
-  const [currentLevel, setCurrentLevel] = useState<number>(-1); // -1 = Auto
+  const [currentLevel, setCurrentLevel] = useState<number>(-1);
   const [isPlaying, setIsPlaying] = useState(false);
   const [isMuted, setIsMuted] = useState(false);
   const [showQualityMenu, setShowQualityMenu] = useState(false);
@@ -24,47 +25,42 @@ export default function VideoPlayer({ url }: VideoPlayerProps) {
     const video = videoRef.current;
     if (!video) return;
 
-    let hls: Hls | null = null;
-
     if (Hls.isSupported()) {
-      hls = new Hls({ enableWorker: true });
+      const hls = new Hls({ enableWorker: true });
+      hlsRef.current = hls; // Simpan instance
       hls.loadSource(url);
       hls.attachMedia(video);
 
       hls.on(Hls.Events.MANIFEST_PARSED, () => {
-        // Ambil daftar kualitas yang tersedia
-        const availableLevels = hls!.levels.map((level, index) => ({
+        const availableLevels = hls.levels.map((level, index) => ({
           height: level.height,
           index: index,
         }));
-        // Urutkan dari kualitas tertinggi ke terendah
         setLevels(availableLevels.sort((a, b) => b.height - a.height));
       });
 
-      // Penanganan Error (Anti Layar Hitam / Stuck)
       hls.on(Hls.Events.ERROR, (event, data) => {
         if (data.fatal) {
           switch (data.type) {
             case Hls.ErrorTypes.NETWORK_ERROR:
-              hls!.startLoad(); // Coba muat ulang
+              hls.startLoad();
               break;
             case Hls.ErrorTypes.MEDIA_ERROR:
-              hls!.recoverMediaError(); // Coba perbaiki media
+              hls.recoverMediaError();
               break;
             default:
-              hls!.destroy(); // Hancurkan jika error tidak dikenal
+              hls.destroy();
               break;
           }
         }
       });
     } else if (video.canPlayType("application/vnd.apple.mpegurl")) {
-      // Fallback untuk Safari (iOS/Mac)
       video.src = url;
     }
 
     return () => {
-      if (hls) {
-        hls.destroy();
+      if (hlsRef.current) {
+        hlsRef.current.destroy();
       }
     };
   }, [url]);
@@ -85,14 +81,9 @@ export default function VideoPlayer({ url }: VideoPlayerProps) {
   };
 
   const changeQuality = (index: number) => {
-    if (videoRef.current && Hls.isSupported()) {
-      // Akses instance hls dari video element (cara cepat untuk demo)
-      // Di produksi, simpan hls di useRef.
-      const hlsInstance = (videoRef.current as any).hls;
-      if (hlsInstance) {
-        hlsInstance.currentLevel = index;
-        setCurrentLevel(index);
-      }
+    if (hlsRef.current) {
+      hlsRef.current.currentLevel = index;
+      setCurrentLevel(index);
     }
     setShowQualityMenu(false);
   };
@@ -107,7 +98,6 @@ export default function VideoPlayer({ url }: VideoPlayerProps) {
         onPause={() => setIsPlaying(false)}
       />
 
-      {/* Overlay Kontrol Bawah */}
       <div className="absolute bottom-0 left-0 w-full p-3 md:p-4 bg-gradient-to-t from-black/80 to-transparent flex items-center justify-between opacity-0 group-hover:opacity-100 transition-opacity">
         <div className="flex items-center gap-4">
           <button onClick={togglePlay} className="text-white hover:text-neo-yellow transition-colors">
@@ -119,7 +109,6 @@ export default function VideoPlayer({ url }: VideoPlayerProps) {
         </div>
 
         <div className="flex items-center gap-4 relative">
-          {/* Tombol Pemilih Kualitas */}
           <div className="relative">
             <button 
               onClick={() => setShowQualityMenu(!showQualityMenu)} 
@@ -129,7 +118,6 @@ export default function VideoPlayer({ url }: VideoPlayerProps) {
               {currentLevel === -1 ? "Auto" : `${levels.find(l => l.index === currentLevel)?.height}p`}
             </button>
 
-            {/* Menu Dropdown Kualitas */}
             {showQualityMenu && (
               <div className="absolute bottom-full right-0 mb-2 bg-white border-[3px] border-neo-text rounded-xl shadow-[4px_4px_0px_0px_#111] overflow-hidden flex flex-col min-w-[100px] z-50">
                 <button 
