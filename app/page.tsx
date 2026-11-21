@@ -18,8 +18,8 @@ export default function Home() {
     { title: "Audio Merger", description: "Satukan dan potong menit atau detik beberapa lagu...", badge: "AUDIO", category: "Audio", href: "#", icon: <Music size={24} strokeWidth={2.5} /> },
     { title: "Photo Studio", description: "Edit dan poles foto dengan alat profesional...", badge: "Studio HD", category: "Media", href: "#", icon: <Sparkles size={24} strokeWidth={2.5} /> },
     { title: "Video Studio", description: "Konversi dan edit video dengan resolusi tinggi...", badge: "FX Studio", category: "Media", href: "#", icon: <Video size={24} strokeWidth={2.5} /> },
-    { title: "Merge PDF", description: "Gabungkan beberapa file PDF menjadi satu dokumen...", badge: "PDF", category: "Media", href: "#", icon: <FileText size={24} strokeWidth={2.5} /> },
-    { title: "Streaming Anime", description: "Nonton anime favorit kualitas HD tanpa batasan...", badge: "Stream", category: "Media", href: "#", icon: <Play size={24} strokeWidth={2.5} /> },
+    { title: "Merge PDF", description: "Gabungkan beberapa file PDF menjadi satu dokumen...", badge: "PDF", category: "Media", href: "#", icon: <FileText size={24} strokeWidth={2.5} /> }, 
+    { title: "Streaming Anime", description: "Nonton anime favorit kualitas HD tanpa batasan...", badge: "Stream", category: "Media", href: "/anime", icon: <Play size={24} strokeWidth={2.5} /> },
   ];
 
   const categories = ["Semua", "Media", "Audio", "QR"];
