@@ -2,10 +2,10 @@
 
 import Link from "next/link";
 import AnimeCard from "../components/AnimeCard";
-import { ArrowLeft, Play, Star, Loader2 } from "lucide-react";
+import { ArrowLeft, Play, Star, Loader2, AlertCircle } from "lucide-react";
 import { useEffect, useState } from "react";
 
-// Tipe data untuk hasil dari Jikan API
+// Tipe data response Tenrai/Jikan
 interface JikanAnime {
   mal_id: number;
   title: string;
@@ -19,40 +19,53 @@ export default function AnimeHome() {
   const [trendingAnime, setTrendingAnime] = useState<JikanAnime[]>([]);
   const [featuredAnime, setFeaturedAnime] = useState<JikanAnime | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
+    let isMounted = true; // Mencegah state update jika komponen sudah unmount
+
     async function fetchAnime() {
       try {
-        // 1. Ambil data Top Anime (Trending)
-        const topRes = await fetch("https://api.jikan.moe/v4/top/anime?limit=10");
+        setIsLoading(true);
+        setError(null);
+
+        // 1. Ambil data Top Anime dari Tenrai API (pengganti Jikan)
+        const topRes = await fetch("https://api.tenrai.org/v4/top/anime?limit=10");
+        if (!topRes.ok) throw new Error(`HTTP error! status: ${topRes.status}`);
         const topData = await topRes.json();
-        
-        // Jeda sebentar untuk menghormati rate limit Jikan (3 req/detik)
+
+        // Jeda 1 detik untuk menghormati rate limit (3 req/detik)
         await new Promise(resolve => setTimeout(resolve, 1000));
 
         // 2. Ambil data Seasonal Anime (Ongoing)
-        const seasonRes = await fetch("https://api.jikan.moe/v4/seasons/now?limit=10");
+        const seasonRes = await fetch("https://api.tenrai.org/v4/seasons/now?limit=10");
+        if (!seasonRes.ok) throw new Error(`HTTP error! status: ${seasonRes.status}`);
         const seasonData = await seasonRes.json();
 
-        // Gabungkan hasilnya (atau tampilkan salah satunya)
-        // Untuk contoh, kita ambil 10 dari Top Anime sebagai Trending
+        if (!isMounted) return; // Hentikan jika komponen sudah tidak ada
+
         setTrendingAnime(topData.data);
-        
-        // Ambil anime pertama dari Top sebagai Featured Hero
         if (topData.data.length > 0) {
           setFeaturedAnime(topData.data[0]);
         }
-
-      } catch (error) {
-        console.error("Gagal mengambil data anime:", error);
+      } catch (err: any) {
+        if (!isMounted) return;
+        console.error("Gagal mengambil data anime:", err);
+        setError("Gagal memuat data anime. Silakan coba lagi nanti.");
       } finally {
-        setIsLoading(false);
+        if (isMounted) setIsLoading(false);
       }
     }
 
     fetchAnime();
-  }, []);
 
+    // Cleanup function: mencegah memory leak dan infinite loop
+    return () => {
+      isMounted = false;
+    };
+  }, []); // Array dependensi kosong = hanya jalan sekali saat mount
+
+  // Tampilan saat loading
   if (isLoading) {
     return (
       <main className="max-w-6xl mx-auto p-4 md:p-8 flex flex-col items-center justify-center min-h-screen">
@@ -62,10 +75,27 @@ export default function AnimeHome() {
     );
   }
 
+  // Tampilan saat error
+  if (error) {
+    return (
+      <main className="max-w-6xl mx-auto p-4 md:p-8 flex flex-col items-center justify-center min-h-screen">
+        <AlertCircle className="w-16 h-16 text-neo-pink mb-4" />
+        <h2 className="font-archivo font-extrabold text-2xl mb-2">Terjadi Kesalahan</h2>
+        <p className="text-gray-600 font-bold mb-4">{error}</p>
+        <button 
+          onClick={() => window.location.reload()} 
+          className="neo-button bg-neo-yellow text-black px-6 py-2.5"
+        >
+          Coba Lagi
+        </button>
+      </main>
+    );
+  }
+
   return (
     <main className="max-w-6xl mx-auto p-4 md:p-8 flex flex-col min-h-screen">
       
-      {/* Header / Navbar Khusus Anime */}
+      {/* Header */}
       <div className="flex items-center gap-4 mb-6">
         <Link href="/" className="bg-white border-[3px] border-neo-text p-2 rounded-xl shadow-[3px_3px_0px_0px_#111] active:translate-y-[3px] active:shadow-none transition-all">
           <ArrowLeft size={20} strokeWidth={3} />
@@ -75,7 +105,7 @@ export default function AnimeHome() {
         </h1>
       </div>
 
-      {/* 1. Hero Banner Anime (Data dari API) */}
+      {/* Hero Banner */}
       {featuredAnime && (
         <div className="relative w-full h-[250px] md:h-[350px] border-[3px] border-neo-text rounded-2xl overflow-hidden shadow-[6px_6px_0px_0px_#111] mb-8 bg-gray-900">
           <img 
@@ -107,7 +137,7 @@ export default function AnimeHome() {
         </div>
       )}
 
-      {/* 2. Trending Section */}
+      {/* Trending Section */}
       <div className="flex items-center justify-between mb-4">
         <h2 className="font-archivo font-extrabold text-xl md:text-2xl text-black uppercase">
           Trending Anime
@@ -117,7 +147,7 @@ export default function AnimeHome() {
         </Link>
       </div>
 
-      {/* 3. Grid Anime (Data dari API) */}
+      {/* Grid Anime */}
       <section className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4 md:gap-6">
         {trendingAnime.map((anime) => (
           <AnimeCard 
