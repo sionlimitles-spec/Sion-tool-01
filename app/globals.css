@@ -4,6 +4,13 @@
   --color-neo-bg: #F4F4F5;
   --color-neo-text: #111111;
   --color-neo-card: #FFFFFF;
+  
+  /* Palet Warna Aksen yang sempat hilang */
+  --color-neo-yellow: #FFDE00;
+  --color-neo-pink: #FF3366;
+  --color-neo-blue: #0066FF;
+  --color-neo-green: #00CC66;
+  --color-neo-purple: #8B5CF6;
 }
 
 body {
@@ -20,7 +27,6 @@ body {
   }
   
   .neo-button {
-    /* Efek tekan: geser 4px dan hilangkan shadow */
     @apply bg-neo-text text-white border-[2px] border-neo-text font-bold rounded-xl shadow-[3px_3px_0px_0px_#111] active:translate-x-[3px] active:translate-y-[3px] active:shadow-none transition-all flex items-center justify-center gap-2 relative overflow-hidden;
   }
 
@@ -38,7 +44,6 @@ body {
   -webkit-text-stroke: 2px #111;
 }
 
-/* Animasi Stagger (Muncul Bergantian) */
 @keyframes slideUp {
   0% { opacity: 0; transform: translateY(12px); }
   100% { opacity: 1; transform: translateY(0); }
@@ -46,10 +51,9 @@ body {
 
 .animate-stagger {
   animation: slideUp 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-  opacity: 0; /* Mulai dari transparan */
+  opacity: 0;
 }
 
-/* Animasi Titik Online Berdenyut */
 @keyframes pulse-green {
   0%, 100% { box-shadow: 0 0 0 0 rgba(34, 197, 94, 0.7); }
   50% { box-shadow: 0 0 0 4px rgba(34, 197, 94, 0); }
