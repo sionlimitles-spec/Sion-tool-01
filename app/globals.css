@@ -1,0 +1,50 @@
+@import "tailwindcss";
+
+@theme {
+  --color-paper: #F0EDE5;
+  --color-ink: #0A0A0A;
+  --color-yellow: #FFE500;
+  --color-pink: #FF2E88;
+  --color-cyan: #00E5FF;
+  --color-acid: #D4FF00;
+  
+  --font-anton: var(--font-anton);
+  --font-grotesk: var(--font-grotesk);
+  --font-marker: var(--font-marker);
+}
+
+body {
+  background-color: var(--color-paper);
+  background-image: radial-gradient(var(--color-ink) 1.5px, transparent 1.5px);
+  background-size: 24px 24px;
+}
+
+@layer components {
+  .neo-border { @apply border-[3px] border-ink; }
+  .neo-shadow { @apply shadow-[4px_4px_0px_0px_#0A0A0A]; }
+  .neo-shadow-lg { @apply shadow-[8px_8px_0px_0px_#0A0A0A]; }
+  .neo-shadow-sm { @apply shadow-[2px_2px_0px_0px_#0A0A0A]; }
+  
+  .neo-btn {
+    @apply bg-white neo-border neo-shadow px-4 py-2 font-bold transition-all active:translate-x-[4px] active:translate-y-[4px] active:shadow-none hover:-translate-y-1 hover:shadow-[6px_6px_0px_0px_#0A0A0A];
+  }
+  
+  .neo-card {
+    @apply bg-white neo-border neo-shadow rounded-xl transition-all hover:-translate-y-1 hover:shadow-[6px_6px_0px_0px_#0A0A0A];
+  }
+
+  .neo-input {
+    @apply w-full bg-white neo-border neo-shadow px-4 py-3 font-bold outline-none focus:bg-yellow transition-colors placeholder:text-gray-500;
+  }
+}
+
+/* Animasi Marquee/Ticker */
+@keyframes ticker {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+.animate-ticker {
+  display: inline-flex;
+  white-space: nowrap;
+  animation: ticker 25s linear infinite;
+  }
