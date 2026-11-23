@@ -1,73 +1,36 @@
 @import "tailwindcss";
 
 @theme {
-  --color-paper: #F0EDE5;
-  --color-ink: #0A0A0A;
-  --color-yellow: #FFE500;
-  --color-pink: #FF2E88;
-  --color-cyan: #00E5FF;
-  --color-acid: #D4FF00;
+  --color-neo-bg: #F4F4F5;
+  --color-neo-text: #111111;
+  --color-neo-card: #FFFFFF;
   
-  --font-anton: var(--font-anton);
-  --font-grotesk: var(--font-grotesk);
-  --font-marker: var(--font-marker);
+  --color-neo-yellow: #FFDE00;
+  --color-neo-pink: #FF3366;
+  --color-neo-blue: #0066FF;
+  --color-neo-green: #00CC66;
+  --color-neo-purple: #8B5CF6;
 }
 
 body {
-  background-color: var(--color-paper);
-  background-image: radial-gradient(var(--color-ink) 1.5px, transparent 1.5px);
+  background-color: var(--color-neo-bg);
+  color: var(--color-neo-text);
+  background-image: radial-gradient(circle, #d4d4d8 1px, transparent 1px);
   background-size: 24px 24px;
-  color: var(--color-ink);
 }
 
 @layer components {
-  .neo-border {
-    @apply border-[3px] border-ink;
-  }
-  .neo-shadow {
-    @apply shadow-[4px_4px_0px_0px_#0A0A0A];
-  }
-  .neo-shadow-lg {
-    @apply shadow-[8px_8px_0px_0px_#0A0A0A];
-  }
-  .neo-shadow-sm {
-    @apply shadow-[2px_2px_0px_0px_#0A0A0A];
-  }
-  
-  .neo-btn {
-    @apply bg-white border-[3px] border-ink shadow-[4px_4px_0px_0px_#0A0A0A] px-4 py-2 font-bold transition-all;
-  }
-  .neo-btn:active {
-    @apply translate-x-[4px] translate-y-[4px] shadow-none;
-  }
-  .neo-btn:hover {
-    @apply -translate-y-1 shadow-[6px_6px_0px_0px_#0A0A0A];
-  }
-  
   .neo-card {
-    @apply bg-white border-[3px] border-ink shadow-[4px_4px_0px_0px_#0A0A0A] rounded-xl transition-all;
+    @apply bg-neo-card border-[3px] border-neo-text rounded-2xl shadow-[4px_4px_0px_0px_#111] transition-all duration-200;
   }
   .neo-card:hover {
-    @apply -translate-y-1 shadow-[6px_6px_0px_0px_#0A0A0A];
+    @apply shadow-[6px_6px_0px_0px_#111] -translate-y-1;
   }
-
-  .neo-input {
-    @apply w-full bg-white border-[3px] border-ink shadow-[4px_4px_0px_0px_#0A0A0A] px-4 py-3 font-bold outline-none transition-colors;
+  
+  .neo-button {
+    @apply border-[2px] border-neo-text font-bold uppercase tracking-wide rounded-xl shadow-[3px_3px_0px_0px_#111] transition-all flex items-center justify-center gap-2 relative overflow-hidden;
   }
-  .neo-input:focus {
-    @apply bg-yellow;
+  .neo-button:active {
+    @apply translate-x-[3px] translate-y-[3px] shadow-none;
   }
-  .neo-input::placeholder {
-    @apply text-gray-500;
-  }
-}
-
-@keyframes ticker {
-  0% { transform: translateX(0); }
-  100% { transform: translateX(-50%); }
-}
-.animate-ticker {
-  display: inline-flex;
-  white-space: nowrap;
-  animation: ticker 25s linear infinite;
 }
