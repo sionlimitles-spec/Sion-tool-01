@@ -17,28 +17,51 @@ body {
   background-color: var(--color-paper);
   background-image: radial-gradient(var(--color-ink) 1.5px, transparent 1.5px);
   background-size: 24px 24px;
+  color: var(--color-ink);
 }
 
 @layer components {
-  .neo-border { @apply border-[3px] border-ink; }
-  .neo-shadow { @apply shadow-[4px_4px_0px_0px_#0A0A0A]; }
-  .neo-shadow-lg { @apply shadow-[8px_8px_0px_0px_#0A0A0A]; }
-  .neo-shadow-sm { @apply shadow-[2px_2px_0px_0px_#0A0A0A]; }
+  .neo-border {
+    @apply border-[3px] border-ink;
+  }
+  .neo-shadow {
+    @apply shadow-[4px_4px_0px_0px_#0A0A0A];
+  }
+  .neo-shadow-lg {
+    @apply shadow-[8px_8px_0px_0px_#0A0A0A];
+  }
+  .neo-shadow-sm {
+    @apply shadow-[2px_2px_0px_0px_#0A0A0A];
+  }
   
   .neo-btn {
-    @apply bg-white neo-border neo-shadow px-4 py-2 font-bold transition-all active:translate-x-[4px] active:translate-y-[4px] active:shadow-none hover:-translate-y-1 hover:shadow-[6px_6px_0px_0px_#0A0A0A];
+    @apply bg-white border-[3px] border-ink shadow-[4px_4px_0px_0px_#0A0A0A] px-4 py-2 font-bold transition-all;
+  }
+  .neo-btn:active {
+    @apply translate-x-[4px] translate-y-[4px] shadow-none;
+  }
+  .neo-btn:hover {
+    @apply -translate-y-1 shadow-[6px_6px_0px_0px_#0A0A0A];
   }
   
   .neo-card {
-    @apply bg-white neo-border neo-shadow rounded-xl transition-all hover:-translate-y-1 hover:shadow-[6px_6px_0px_0px_#0A0A0A];
+    @apply bg-white border-[3px] border-ink shadow-[4px_4px_0px_0px_#0A0A0A] rounded-xl transition-all;
+  }
+  .neo-card:hover {
+    @apply -translate-y-1 shadow-[6px_6px_0px_0px_#0A0A0A];
   }
 
   .neo-input {
-    @apply w-full bg-white neo-border neo-shadow px-4 py-3 font-bold outline-none focus:bg-yellow transition-colors placeholder:text-gray-500;
+    @apply w-full bg-white border-[3px] border-ink shadow-[4px_4px_0px_0px_#0A0A0A] px-4 py-3 font-bold outline-none transition-colors;
+  }
+  .neo-input:focus {
+    @apply bg-yellow;
+  }
+  .neo-input::placeholder {
+    @apply text-gray-500;
   }
 }
 
-/* Animasi Marquee/Ticker */
 @keyframes ticker {
   0% { transform: translateX(0); }
   100% { transform: translateX(-50%); }
@@ -47,4 +70,4 @@ body {
   display: inline-flex;
   white-space: nowrap;
   animation: ticker 25s linear infinite;
-  }
+}
