@@ -1,28 +1,22 @@
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";
 
-export default function ToolCard({ title, description, badge, href, icon, badgeColor }: any) {
+export default function ToolCard({ title, description, badge, href, icon, colorTheme }: any) {
   return (
-    <Link href={href} className="neo-card p-5 flex flex-col h-full group bg-white">
+    <div className="neo-card p-4 md:p-5 flex flex-col h-full bg-white">
       <div className="flex justify-between items-start mb-4">
-        <div className="w-12 h-12 neo-border rounded-lg flex items-center justify-center bg-cyan shadow-[2px_2px_0px_0px_#0A0A0A] group-hover:bg-yellow transition-colors">
+        <div className={`w-10 h-10 md:w-12 md:h-12 border-[2px] border-neo-text flex items-center justify-center rounded-xl text-white ${colorTheme.iconBg}`}>
           {icon}
         </div>
-        <span className={`px-2 py-1 text-[10px] font-extrabold uppercase neo-border rounded-md neo-shadow-sm ${badgeColor}`}>
+        <span className={`border-[2px] border-neo-text px-2 py-1 text-[10px] md:text-xs font-bold uppercase rounded-lg text-black ${colorTheme.badgeBg}`}>
           {badge}
         </span>
       </div>
-      
-      <h3 className="font-anton text-xl md:text-2xl uppercase tracking-wide mb-2 leading-tight">
-        {title}
-      </h3>
-      <p className="text-xs md:text-sm text-gray-600 font-bold flex-grow mb-6 line-clamp-2">
-        {description}
-      </p>
-      
-      <div className="neo-btn w-full flex items-center justify-center gap-2 mt-auto bg-ink text-yellow">
-        Buka Alat <ArrowRight size={16} className="group-hover:translate-x-1 transition-transform" />
-      </div>
-    </Link>
+      <h3 className="font-archivo font-extrabold text-base md:text-lg leading-tight mb-2 text-black">{title}</h3>
+      <p className="text-xs md:text-sm text-gray-600 flex-grow mb-5 line-clamp-3 leading-relaxed">{description}</p>
+      <Link href={href} className={`neo-button w-full py-2 md:py-2.5 text-xs md:text-sm mt-auto ${colorTheme.buttonBg}`}>
+        Buka <ArrowRight size={16} />
+      </Link>
+    </div>
   );
 }
